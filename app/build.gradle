@@ -22,6 +22,14 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
     }
+    productFlavors{
+        free {
+            applicationId "com.udacity.gradle.builditbigger.free"
+        }
+        paid {
+            applicationId "com.udacity.gradle.builditbigger.paid"
+        }
+    }
 }
 
 dependencies {
