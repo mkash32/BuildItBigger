@@ -21,6 +21,7 @@ public class Utils {
         @Override
         protected String doInBackground(Void... params) {
             if(myApiService == null) {
+                // Replace "android-app-backend" with the project ID of your backend deployment
                 MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                         .setRootUrl("https://android-app-backend.appspot.com/_ah/api/");
                 /*
