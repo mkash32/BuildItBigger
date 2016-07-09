@@ -22,6 +22,8 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -55,48 +57,23 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void tellJoke(View view) {
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, ""));
+    public void tellJoke(View view)
+    {
+        new EndpointsUITask(MainActivity.this).execute();
     }
 
-    class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
-        private MyApi myApiService = null;
+    public static class EndpointsUITask extends Utils.EndpointsAsyncTask {
+        private MainActivity activity;
 
-        @Override
-        protected String doInBackground(Pair<Context, String>... params) {
-            if(myApiService == null) {
-                MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                        .setRootUrl("https://android-app-backend.appspot.com/_ah/api/");
-                /*
-                MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        })
-                        .setApplicationName("BuildItBigger");
-                */
-                myApiService = builder.build();
-            }
-
-            try {
-                return myApiService.getJoke().execute().getData();
-            } catch (IOException e) {
-                return e.getMessage();
-            }
+        public EndpointsUITask(MainActivity activity) {
+            this.activity = activity;
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Intent intent = new Intent(MainActivity.this, JokesActivity.class);
+            Intent intent = new Intent(activity, JokesActivity.class);
             intent.putExtra("joke", result);
-            startActivity(intent);
+            activity.startActivity(intent);
         }
     }
-
-
 }
